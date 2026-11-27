@@ -4,6 +4,8 @@ import '../components/message_bar.dart';
 import '../components/navbar.dart';
 import '../services/robot_service.dart';
 import 'publish_tab.dart';
+import 'setting_tab.dart';
+import 'testing_tab.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,8 +20,8 @@ class _HomePageState extends State<HomePage> {
   int selectedTab = 0;
   static const List<String> tabHints = [
     'Publish: tap an earth block, then Send to robot.',
-    'Publish: tap an earth block, then Send to robot.',
-    'Publish: tap an earth block, then Send to robot.',
+    'Setting: configure the robot address and port.',
+    'Testing: adjust simulated status and send a test command.',
   ];
   String message = tabHints[0];
 
@@ -66,6 +68,18 @@ class _HomePageState extends State<HomePage> {
                 index: selectedTab,
                 children: [
                   PublishTab(onSend: sendToRobot, onMessage: showMessage),
+                  SettingTab(robot: robot, onMessage: showMessage),
+                  TestingTab(
+                    lidarOn: lidarOn,
+                    gamepadOn: gamepadOn,
+                    robotConnected: robotConnected,
+                    onLidarChanged: (value) => setState(() => lidarOn = value),
+                    onGamepadChanged: (value) =>
+                        setState(() => gamepadOn = value),
+                    onRobotChanged: (value) =>
+                        setState(() => robotConnected = value),
+                    onSend: sendToRobot,
+                  ),
                 ],
               ),
             ),

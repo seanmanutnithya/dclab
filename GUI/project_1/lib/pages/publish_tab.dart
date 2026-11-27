@@ -69,6 +69,7 @@ class _PublishTabState extends State<PublishTab> {
                     blockTypes: blockTypes,
                     selectedBlock: selectedBlock,
                     onBlockTap: selectBlock,
+                    fillAvailable: true,
                   ),
                 ),
               ),
@@ -76,23 +77,27 @@ class _PublishTabState extends State<PublishTab> {
             const SizedBox(width: 12),
             Expanded(
               flex: 2,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    AppCard(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: AppCard(
                       title: 'Robot control',
-                      child: RobotControls(onCommand: widget.onSend),
-                    ),
-                    AppCard(
-                      child: BlockPanel(
-                        selectedBlock: selectedBlock,
-                        selectedType: selectedType,
-                        onTypeChosen: chooseType,
-                        onSend: sendBlock,
+                      expandChild: true,
+                      child: RobotControls(
+                        onCommand: widget.onSend,
+                        expand: true,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  AppCard(
+                    child: BlockPanel(
+                      selectedBlock: selectedBlock,
+                      selectedType: selectedType,
+                      onTypeChosen: chooseType,
+                      onSend: sendBlock,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
