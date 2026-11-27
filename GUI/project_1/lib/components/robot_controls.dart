@@ -11,6 +11,7 @@ class ControlButton extends StatelessWidget {
     required this.color,
     this.borderColor = ThemeColor.border,
     this.onTap,
+    this.expand = false,
   });
 
   final String title;
@@ -18,6 +19,7 @@ class ControlButton extends StatelessWidget {
   final Color color;
   final Color borderColor;
   final VoidCallback? onTap;
+  final bool expand;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class ControlButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         onTap: onTap,
         child: Container(
-          height: 64,
+          height: expand ? null : 64,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -61,9 +63,14 @@ class ControlButton extends StatelessWidget {
 // All the robot buttons together.
 // When a button is tapped we call onCommand with a short command name.
 class RobotControls extends StatelessWidget {
-  const RobotControls({super.key, required this.onCommand});
+  const RobotControls({
+    super.key,
+    required this.onCommand,
+    this.expand = false,
+  });
 
   final void Function(String command) onCommand;
+  final bool expand;
 
   static const Color darkButton = Color(0xFF1F232B);
   static const Color greenButton = Color(0xFF166534);
@@ -71,87 +78,97 @@ class RobotControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget buttonRow(ControlButton left, ControlButton right) {
+      return Row(
+        crossAxisAlignment: expand
+            ? CrossAxisAlignment.stretch
+            : CrossAxisAlignment.center,
+        children: [
+          Expanded(child: left),
+          const SizedBox(width: 8),
+          Expanded(child: right),
+        ],
+      );
+    }
+
+    Widget fillHeight(Widget child) {
+      return expand ? Expanded(child: child) : child;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: ControlButton(
-                title: 'Start',
-                subtitle: 'Back',
-                color: greenButton,
-                borderColor: ThemeColor.green,
-                onTap: () => onCommand('start'),
-              ),
+        fillHeight(
+          buttonRow(
+            ControlButton(
+              title: 'Start',
+              subtitle: 'Back',
+              color: greenButton,
+              borderColor: ThemeColor.green,
+              onTap: () => onCommand('start'),
+              expand: expand,
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ControlButton(
-                title: 'Retry',
-                subtitle: 'M1',
-                color: greenButton,
-                borderColor: ThemeColor.green,
-                onTap: () => onCommand('retry'),
-              ),
+            ControlButton(
+              title: 'Retry',
+              subtitle: 'M1',
+              color: greenButton,
+              borderColor: ThemeColor.green,
+              onTap: () => onCommand('retry'),
+              expand: expand,
             ),
-          ],
+          ),
         ),
         const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: ControlButton(
-                title: 'Start mechanism',
-                subtitle: 'Start',
-                color: darkButton,
-                onTap: () => onCommand('start_mechanism'),
-              ),
+        fillHeight(
+          buttonRow(
+            ControlButton(
+              title: 'Start mechanism',
+              subtitle: 'Start',
+              color: darkButton,
+              onTap: () => onCommand('start_mechanism'),
+              expand: expand,
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ControlButton(
-                title: 'Reset mechanism',
-                subtitle: 'Y',
-                color: redButton,
-                borderColor: ThemeColor.red,
-                onTap: () => onCommand('reset_mechanism'),
-              ),
+            ControlButton(
+              title: 'Reset mechanism',
+              subtitle: 'Y',
+              color: redButton,
+              borderColor: ThemeColor.red,
+              onTap: () => onCommand('reset_mechanism'),
+              expand: expand,
             ),
-          ],
+          ),
         ),
         const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: ControlButton(
-                title: 'Init odom',
-                subtitle: 'A',
-                color: darkButton,
-                onTap: () => onCommand('init_odom'),
-              ),
+        fillHeight(
+          buttonRow(
+            ControlButton(
+              title: 'Init odom',
+              subtitle: 'A',
+              color: darkButton,
+              onTap: () => onCommand('init_odom'),
+              expand: expand,
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ControlButton(
-                title: 'Init odom retry',
-                subtitle: 'M2',
-                color: darkButton,
-                onTap: () => onCommand('init_odom_retry'),
-              ),
+            ControlButton(
+              title: 'Init odom retry',
+              subtitle: 'M2',
+              color: darkButton,
+              onTap: () => onCommand('init_odom_retry'),
+              expand: expand,
             ),
-          ],
+          ),
         ),
         const SizedBox(height: 8),
-
-        GestureDetector(
-          onTapDown: (_) => onCommand('hold_y'),
-          onTapUp: (_) => onCommand('release_y'),
-          onTapCancel: () => onCommand('release_y'),
-          child: const ControlButton(
-            title: 'Initialization: hold',
-            subtitle: 'hold Y',
-            color: darkButton,
+        fillHeight(
+          GestureDetector(
+            onTapDown: (_) => onCommand('hold_y'),
+            onTapUp: (_) => onCommand('release_y'),
+            onTapCancel: () => onCommand('release_y'),
+            child: ControlButton(
+              title: 'Initialization: hold',
+              subtitle: 'hold Y',
+              color: darkButton,
+              expand: expand,
+            ),
           ),
         ),
         const SizedBox(height: 12),
